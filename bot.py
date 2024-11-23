@@ -1,55 +1,36 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from faker import Faker
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options
 import time
-import csv
-
-# إعداد البيانات الوهمية
-fake = Faker()
+from webdriver_manager.firefox import GeckoDriverManager
 
 # إعداد المتصفح
-driver = webdriver.Chrome(executable_path="chromedriver")
+options = Options()
+options.add_argument("--headless")  # تشغيل المتصفح بدون واجهة
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+service = Service(GeckoDriverManager().install())
+driver = webdriver.Firefox(service=service, options=options)
 
-def create_account():
-    driver.get("https://example.com/register")  # ضع رابط التسجيل الخاص بالموقع هنا
+# قائمة روابط الفيديوهات
+videos = [
+    "https://www.tiktok.com/@username/video/VIDEO_ID_1",
+    "https://www.tiktok.com/@username/video/VIDEO_ID_2",
+    "https://www.tiktok.com/@username/video/VIDEO_ID_3",
+]
 
-    username = fake.user_name()
-    email = fake.email()
-    password = "password123"
+def watch_videos(video_urls, duration=15):
+    try:
+        for video_url in video_urls:
+            print(f"فتح الفيديو: {video_url}")
+            driver.get(video_url)  # فتح الفيديو
+            time.sleep(duration)  # انتظر لمدة محددة (بالثواني) لمحاكاة المشاهدة
+            print(f"تمت مشاهدة الفيديو لمدة {duration} ثانية.")
+    except Exception as e:
+        print(f"حدث خطأ أثناء المشاهدة: {e}")
+    finally:
+        driver.quit()
+        print("تم إغلاق المتصفح.")
 
-    # تعبئة الحقول
-    driver.find_element(By.ID, "username_field").send_keys(username)
-    driver.find_element(By.ID, "email_field").send_keys(email)
-    driver.find_element(By.ID, "password_field").send_keys(password)
-
-    # إرسال النموذج
-    driver.find_element(By.ID, "submit_button").click()
-    time.sleep(5)
-
-    # حفظ البيانات
-    with open("accounts.csv", "a") as file:
-        file.write(f"{username},{email},{password}\n")
-
-def follow_account(target_username):
-    driver.get("https://example.com/login")  # ضع رابط تسجيل الدخول هنا
-
-    with open("accounts.csv", "r") as file:
-        accounts = csv.reader(file)
-        for account in accounts:
-            username, email, password = account
-            # تسجيل الدخول
-            driver.find_element(By.ID, "email_field").send_keys(email)
-            driver.find_element(By.ID, "password_field").send_keys(password)
-            driver.find_element(By.ID, "login_button").click()
-            time.sleep(3)
-
-            # متابعة الحساب
-            driver.get(f"https://example.com/{target_username}")
-            driver.find_element(By.ID, "follow_button").click()
-            time.sleep(2)
-
-            # تسجيل الخروج
-            driver.get("https://example.com/logout")
-
-driver.quit()
+# تنفيذ الكود
+watch_videos(videos, duration=30)  # مشاهدة كل فيديو لمدة 30 ثانية
