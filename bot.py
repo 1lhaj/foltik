@@ -14,9 +14,9 @@ driver = webdriver.Firefox(service=service, options=options)
 
 # قائمة روابط الفيديوهات
 videos = [
-    "https://www.tiktok.com/@username/video/VIDEO_ID_1",
-    "https://www.tiktok.com/@username/video/VIDEO_ID_2",
-    "https://www.tiktok.com/@username/video/VIDEO_ID_3",
+    "https://vm.tiktok.com/ZMhvm2qL5/",
+    "https://www.tiktok.com/@l7aj___/video/7440466161730473271?_r=1&_t=8rdPgK6B3dn",
+    "https://www.tiktok.com/@l7aj___/video/7440466161730473271?_r=1&_t=8rdPgK6B3dn",
 ]
 
 def watch_videos(video_urls, duration=15):
